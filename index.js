@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion,ObjectId  } = require("mongodb");
 const cors = require("cors");
 const app = express();
 const port = 3000;
@@ -15,7 +15,7 @@ const client = new MongoClient(uri, {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  }
+  },
 });
 
 app.get("/", (req, res) => {
@@ -23,14 +23,35 @@ app.get("/", (req, res) => {
 });
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
+    const db = client.db("car-bd");
+    const carCollection = db.collection("cars");
+    console.log(carCollection);
+
+    app.get("/cars", async (req, res) => {
+      const result = await carCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.get("/latest-cars", async (req, res) => {
+      const cursor = carCollection.find().sort({ createdAt: -1 }).limit(6);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get("/cars/:id", async (req, res) => {
+    const id = req.params.id;
+    const quary = {_id: new ObjectId(id)}
+    const result = await carCollection.findOne( quary);
+    res.send(result)
+    })
+
     await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
   } finally {
     // Ensures that the client will close when you finish/error
-//     await client.close();
+    //     await client.close();
   }
 }
 run().catch(console.dir);
