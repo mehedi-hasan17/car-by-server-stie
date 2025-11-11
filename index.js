@@ -75,6 +75,16 @@ async function run() {
       res.send(result);
     });
 
+    app.patch("/bookings/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: { status: "unavailable" },
+      };
+      const result = await carCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+
     app.put("/cars/:id", async (req, res) => {
       const id = req.params.id;
       const updateData = req.body;
