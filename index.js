@@ -52,6 +52,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get('/search', async(req,res)=>{
+      const searchValue = req.query.search
+      const result =await carCollection.find({name: {$regex: searchValue, $options : 'i'}}).toArray()
+      res.send(result)
+    })
+
     // GET all cars by provider email
     app.get("/my-listings/:email", async (req, res) => {
       const email = req.params.email;
@@ -120,3 +126,5 @@ run().catch(console.dir);
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+// vercel --prod
