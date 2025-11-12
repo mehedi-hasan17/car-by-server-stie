@@ -101,7 +101,6 @@ async function run() {
       res.send(result);
     });
 
-    // Delete car by ID
     app.delete("/cars/:id", async (req, res) => {
       try {
         const id = req.params.id;
