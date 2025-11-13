@@ -3,13 +3,12 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
 const app = express();
 const port = 3000;
-
+require('dotenv').config()
 // VTCIux8qR5cUBISX
 // car-by
 app.use(cors());
 app.use(express.json());
-const uri =
-  "mongodb+srv://car-by:VTCIux8qR5cUBISX@cluster0.qqb9b6u.mongodb.net/?appName=Cluster0";
+const uri =`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.qqb9b6u.mongodb.net/?appName=Cluster0`;
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -26,7 +25,7 @@ async function run() {
     const db = client.db("car-bd");
     const carCollection = db.collection("cars");
     const bookingCollection = db.collection("bookings");
-    console.log(carCollection);
+    // console.log(carCollection);
 
     app.get("/cars", async (req, res) => {
       const result = await carCollection.find().toArray();
@@ -52,11 +51,13 @@ async function run() {
       res.send(result);
     });
 
-    app.get('/search', async(req,res)=>{
-      const searchValue = req.query.search
-      const result =await carCollection.find({name: {$regex: searchValue, $options : 'i'}}).toArray()
-      res.send(result)
-    })
+    app.get("/search", async (req, res) => {
+      const searchValue = req.query.search;
+      const result = await carCollection
+        .find({ name: { $regex: searchValue, $options: "i" } })
+        .toArray();
+      res.send(result);
+    });
 
     // GET all cars by provider email
     app.get("/my-listings/:email", async (req, res) => {
@@ -125,5 +126,5 @@ run().catch(console.dir);
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
-
+// https://meet.google.com/psx-bfvk-scf
 // vercel --prod
