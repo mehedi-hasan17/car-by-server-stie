@@ -25,7 +25,7 @@ async function run() {
     const db = client.db("car-bd");
     const carCollection = db.collection("cars");
     const bookingCollection = db.collection("bookings");
-    // console.log(carCollection);
+    
 
     app.get("/cars", async (req, res) => {
       const result = await carCollection.find().toArray();
@@ -59,7 +59,7 @@ async function run() {
       res.send(result);
     });
 
-    // GET all cars by provider email
+    
     app.get("/my-listings/:email", async (req, res) => {
       const email = req.params.email;
       const query = { providerEmail: email };
@@ -67,7 +67,7 @@ async function run() {
       res.send(result);
     });
 
-    // GET bookings by user email
+    
     app.get("/my-bookings/:email", async (req, res) => {
       const email = req.params.email;
       const query = { bookedBy: email };
@@ -75,9 +75,8 @@ async function run() {
       res.send(result);
     });
 
-    // POST - Create a new booking
     app.post("/bookings", async (req, res) => {
-      const booking = req.body; // frontend থেকে আসা ডেটা
+      const booking = req.body;
       const result = await bookingCollection.insertOne(booking);
       res.send(result);
     });
